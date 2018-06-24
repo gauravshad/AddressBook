@@ -11,6 +11,7 @@ import com.eai.addressbook.model.RestResponse;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  *
@@ -47,7 +48,24 @@ public class RestRequestHandler implements HttpHandler{
                                 }
                             }
                             else{
-                                //make all contacts
+                                try{
+                                    
+                                    String query = null;
+                                    if(url[1].contains("?")){
+                                        query = url[1].split("\\?")[1];
+                                    }
+                                    
+                                    Set<Contact> res = api.getWithQuery(query);
+                                    
+                                    if(res!=null)
+                                        RestResponse.sendResponse(JSONconverter.toJson(res), httpExchange);
+                                    else
+                                        RestResponse.sendResponse("No results match the given query!!!", httpExchange);
+                                }
+                                catch(Exception e){
+                                    RestResponse.sendResponse("Error Occured!!! "+e.getMessage(), httpExchange);
+                                }
+                                
                             }
                             
                             break;

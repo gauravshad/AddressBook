@@ -48,7 +48,7 @@ public class ElasticSearchTest {
     @Test
     public void basic(){
         
-        Contact gaurav = new Contact("gaurav", 123, "Orange Street");
+        Contact gaurav = new Contact("gaurav", "123", "Orange Street");
         
         boolean status = api.createContact(gaurav);
         System.out.println(status);
@@ -61,7 +61,7 @@ public class ElasticSearchTest {
             System.out.println(resp.toString());
         
         try{
-        Thread.sleep(1000000);
+        //Thread.sleep(1000000);
         }
         catch(Exception e){
             e.printStackTrace();

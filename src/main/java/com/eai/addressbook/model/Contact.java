@@ -11,10 +11,10 @@ package com.eai.addressbook.model;
  */
 public class Contact {
     private String name;
-    private long phoneNumber;
+    private String phoneNumber;
     private String address;
     
-    public Contact(String name, long phoneNumber, String address){
+    public Contact(String name, String phoneNumber, String address){
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.address = address;
@@ -24,7 +24,7 @@ public class Contact {
         this.name = name;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -36,7 +36,7 @@ public class Contact {
         return name;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 

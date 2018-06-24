@@ -13,6 +13,8 @@ package com.eai.addressbook.server;
 import com.eai.addressbook.model.Contact;
 import com.eai.addressbook.model.JSONconverter;
 import java.net.InetAddress;
+import java.util.HashSet;
+import java.util.Set;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
@@ -36,7 +38,7 @@ public class ElasticSearch {
     private static ElasticSearch instance;
     private TransportClient client;
     private TransportAddress address;
-    private String Index = "contacts";
+    private String Index = "contact";
     private String Type = "contact";
     private String Default = "name";
     //private EmbeddedElastic node;
@@ -88,7 +90,6 @@ public class ElasticSearch {
         
         SearchResponse response = client.prepareSearch()
                 .setIndices(Index)
-                .setTypes(Type)
                 .setQuery(query)
                 .execute()
                 .actionGet();
@@ -101,6 +102,37 @@ public class ElasticSearch {
         }
         catch(Exception e){
             e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public Set<Contact> getWithQuery(String queryString){
+        try{
+            QueryBuilder query=null;
+            if(queryString!=null)
+                query = queryStringQuery(queryString);
+            else
+                query = QueryBuilders.matchAllQuery();
+        
+            SearchResponse response = client.prepareSearch()
+                    .setIndices(Index)
+                    .setQuery(query)
+                    .execute()
+                    .actionGet();
+        
+            if(response.getHits().totalHits < 1)
+                return null;
+            else{
+                Set<Contact> set = new HashSet<Contact>();
+                for(int i=0; i<response.getHits().totalHits; i++){
+                    Contact c = (Contact) JSONconverter.toObject(response.getHits().getAt(i).getSourceAsString(), Contact.class);
+                    set.add(c);
+                }
+                
+                return set;
+            }
+        }
+        catch(Exception e){
             return null;
         }
     }
