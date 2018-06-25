@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2018 gaurav shad.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 import com.eai.addressbook.model.Contact;
@@ -16,11 +26,10 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author gaura
+ * @author gaurav shad
  */
 public class ElasticSearchTest {
     ElasticSearch api;
-    RestServer server;
     
     public ElasticSearchTest() {
     }
@@ -37,40 +46,59 @@ public class ElasticSearchTest {
     public void setUp() {
         api = ElasticSearch.getInstance();
         api.SetupServer("9300");
-        server = new RestServer();
-        server.setupServer("1234");
     }
     
     @After
     public void tearDown() {
+        api.close();
     }
 
     @Test
-    public void basic(){
+    public void CreateTest(){
+        System.out.println("    .Running Create Test");
+        Contact mike = new Contact("mike", "1234567890", "Orange Street");
+        boolean status1 = api.createContact(mike);
+        assert(status1 == true);
         
-        Contact gaurav = new Contact("gaurav", "123", "Orange Street");
+        Contact jersey = new Contact("jersey", "9999888822", "Washington");
+        boolean status2 = api.createContact(jersey);
+        assert(status2 == true);
+    }
+    
+    @Test
+    public void ReadTest(){
+        System.out.println("    .Running Read Test");
+        Contact mike = new Contact("mike", "1234567890", "Orange Street");
+        boolean status1 = api.createContact(mike);
         
-        boolean status = api.createContact(gaurav);
-        System.out.println(status);
-        
-        Contact resp = api.getContact("gaurav");
-        
+        Contact resp = api.getContact("mike");
         assertNotNull(resp);
-        
-        if(resp!=null)
-            System.out.println(resp.toString());
-        
+        assert(resp.getName().equals("mike"));
+    }
+    
+    @Test
+    public void UpdateTest(){
+        System.out.println("    .Running Update Test");
         try{
-        //Thread.sleep(1000000);
+        boolean status1 = api.updateContact("mike");
+        assert(status1 == true);
         }
         catch(Exception e){
-            e.printStackTrace();
+            
         }
         
-        assert(api.deleteContact("gaurav") == true);
-        
-        
-        
-        api.close();
+        try{
+            boolean status2 = api.updateContact("randomName");
+        }
+        catch(Exception e){
+            assert(e.getMessage().equals("Contact Not Found!!!"));
+        }
+    }
+    
+    @Test
+    public void DeleteTest(){
+        System.out.println("    .Running Delete Test");
+        boolean status1 = api.deleteContact("mike");
+        assert(status1 == true);
     }
 }
